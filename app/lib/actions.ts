@@ -72,18 +72,18 @@ export type State = {
     const amountInCents = amount * 100;
     const date = new Date().toISOString().split('T')[0];
    
-    // Insert data into the database
     try {
       await sql`
         INSERT INTO invoices (customer_id, amount, status, date)
         VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
       `;
     } catch (error) {
-      // If a database error occurs, return a more specific error.
+      console.error("Database error:", error); // ✅ Ahora se usa `error`
       return {
-        message: 'Database Error: Failed to Create Invoice.',
+        message: "Database Error: Failed to Create Invoice.",
       };
     }
+    
    
     // Revalidate the cache for the invoices page and redirect the user.
     revalidatePath('/dashboard/invoices');
