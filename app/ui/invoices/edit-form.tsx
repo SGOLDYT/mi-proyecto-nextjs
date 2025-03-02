@@ -1,5 +1,6 @@
 'use client';
-
+import { updateInvoice } from '@/app/lib/actions';
+import { useActionState } from 'react';
 import { CustomerField, InvoiceForm } from '@/app/lib/definitions';
 import {
   CheckIcon,
@@ -9,6 +10,14 @@ import {
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
+type State = {
+  message: string; // ✅ Cambiado de `string | null` a `string` para evitar el error de tipos
+  errors: {
+    customerId?: string[];
+    amount?: string[];
+    status?: string[];
+  };
+};
 
 export default function EditInvoiceForm({
   invoice,
@@ -17,8 +26,12 @@ export default function EditInvoiceForm({
   invoice: InvoiceForm;
   customers: CustomerField[];
 }) {
+
+  const initialState: State = { message: "", errors: {} }; // Asignar un string vacío en lugar de null
+  const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
+  const [state, formAction] = useActionState(updateInvoiceWithId, initialState);
   return (
-    <form>
+    <form action={(formData) => formAction(formData)}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Customer Name */}
         <div className="mb-4">
